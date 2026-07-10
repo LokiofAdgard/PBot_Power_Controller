@@ -19,12 +19,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+#include <stdint.h>
+
 #include "stm32f1xx_hal.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "INA231.h"
 #include "stm32f1xx_hal_def.h"
+#include "structs.h"
 
 /* USER CODE END Includes */
 
@@ -48,8 +51,8 @@
 I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
-uint8_t  count = 0;
-INA231_t ina1;
+uint8_t         count = 0;
+PowerController pc;
 
 /* USER CODE END PV */
 
@@ -95,7 +98,8 @@ int main(void) {
     MX_GPIO_Init();
     MX_I2C1_Init();
     /* USER CODE BEGIN 2 */
-    INA231_Init(&ina1, &hi2c1, INA_ADDR, DEFAULT_R_SHUNT, DEFAULT_CURRENT_LSB);
+    pc.state.bits.mode = MODE_PWR_ON;
+    INA231_Init(&pc.inaSol, &hi2c1, INA_ADDR, DEFAULT_R_SHUNT, DEFAULT_CURRENT_LSB);
 
     /* USER CODE END 2 */
 
@@ -103,7 +107,9 @@ int main(void) {
     /* USER CODE BEGIN WHILE */
     while (1) {
         count++;
-        INA231_GetVals(&ina1);
+        INA231_GetVals(&pc.inaSol);
+        pc.state.bits.sol = 1;
+        // uint16_t test = pc.state.raw;
         HAL_Delay(500);
         /* USER CODE END WHILE */
 
