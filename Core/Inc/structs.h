@@ -5,8 +5,15 @@
 
 #include "INA231.h"
 
+#define INA_SOL_ADDR  (0x40 << 1)
+#define INA_MPPT_ADDR (0x41 << 1)
+#define INA_BAT_ADDR  (0x42 << 1)
+#define INA_V5_ADDR   (0x43 << 1)
+#define INA_V12A_ADDR (0x44 << 1)
+#define INA_V12B_ADDR (0x45 << 1)
+
 typedef enum {
-    MODE_STARTUP = 0x00,
+    MODE_INIT    = 0x00,
     MODE_PWR_ON  = 0x01,
     MODE_PWR_SAV = 0x02,
     MODE_ERR     = 0x03
@@ -46,5 +53,11 @@ typedef struct PowerController {
 
     uint16_t temperature;
 } PowerController;
+
+void pc_init(PowerController* pc, I2C_HandleTypeDef* hi2c);
+void pc_check_dc_in(PowerController* pc);
+void pc_ina_update(PowerController* pc);
+void pc_set_mode(PowerController* pc);
+void pc_mode_update(PowerController* pc);
 
 #endif

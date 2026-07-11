@@ -34,6 +34,7 @@ enable_language(C ASM)
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
     Drivers/INA231/INA231.c
+    Core/Src/funcs.c
 )
 
 # Add STM32CubeMX generated sources

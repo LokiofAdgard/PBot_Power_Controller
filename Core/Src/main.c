@@ -19,6 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+#include <stdint.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32f103xb.h"
@@ -36,7 +38,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define INA_ADDR (0x40 << 1)
 
 /* USER CODE END PD */
 
@@ -86,6 +87,7 @@ int main(void) {
     /* MCU Configuration--------------------------------------------------------*/
 
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+
     HAL_Init();
 
     /* USER CODE BEGIN Init */
@@ -104,10 +106,8 @@ int main(void) {
     MX_I2C1_Init();
     MX_TIM2_Init();
     /* USER CODE BEGIN 2 */
-    pc.state.bits.mode = MODE_PWR_ON;
+    pc_init(&pc, &hi2c1);
     HAL_TIM_Base_Start_IT(&htim2);
-    INA231_Init(&pc.inaSol, &hi2c1, INA_ADDR, DEFAULT_R_SHUNT, DEFAULT_CURRENT_LSB);
-
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -122,7 +122,8 @@ int main(void) {
         if (flag_reg & (1 << 2)) {  // per s
             flag_reg &= ~(1 << 2);
             HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-            INA231_GetVals(&pc.inaSol);
+            pc_ina_update(&pc);
+            pc_check_dc_in(&pc);
         }
         /* USER CODE END WHILE */
 
