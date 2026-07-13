@@ -26,15 +26,15 @@
 typedef struct INA231_t {
     // Device
     I2C_HandleTypeDef* i2c;
-    uint16_t           address;
+    uint8_t            address;
     HAL_StatusTypeDef  status;
 
     // Config
     uint16_t config;
     uint16_t calib;
     uint8_t  timeout;
-    float r_shunt;
-    float current_lsb;
+    float    r_shunt;
+    float    current_lsb;
 
     // Outputs
     int16_t i_reg;
