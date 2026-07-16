@@ -19,10 +19,6 @@ typedef enum {
     MODE_ERR     = 0x03
 } Mode_t;
 
-typedef enum {
-    REQ_X = 0x00
-} Req_t;
-
 typedef struct PowerController {
     union {
         struct {
@@ -39,7 +35,10 @@ typedef struct PowerController {
 
             uint16_t en_fan : 1;
 
-            uint16_t req : 4;
+            uint16_t req_stat : 1;
+            uint16_t req_ina : 1;
+            uint16_t req_all : 1;
+            uint16_t req : 2;
         } bits;
         uint16_t raw;
     } state;
@@ -57,7 +56,9 @@ typedef struct PowerController {
 void pc_init(PowerController* pc, I2C_HandleTypeDef* hi2c);
 void pc_check_dc_in(PowerController* pc);
 void pc_ina_update(PowerController* pc);
+void pc_tmp_update(PowerController* pc);
 void pc_set_mode(PowerController* pc);
 void pc_mode_update(PowerController* pc);
+void pc_reply(PowerController* pc);
 
 #endif

@@ -1,4 +1,5 @@
 #include "INA231.h"
+#include "canbus.h"
 #include "stm32f103xb.h"
 #include "stm32f1xx_hal_gpio.h"
 #include "structs.h"
@@ -35,6 +36,10 @@ void pc_ina_update(PowerController* pc) {
     // INA231_GetVals(&pc->inaV12B);
 }
 
+void pc_tmp_update(PowerController* pc) {
+    pc->temperature += 5;
+}
+
 void pc_set_mode(PowerController* pc) {
     return;
 }
@@ -49,5 +54,23 @@ void pc_update_mode(PowerController* pc) {
             return;
         case MODE_ERR:
             return;
+    }
+}
+
+void pc_reply(PowerController* pc) {
+    if (pc->state.bits.req_all) {
+        pc->state.bits.req_all = 0;
+        can_transmit_sta(pc);
+        can_transmit_ina(&pc->inaSol);
+        return;
+    }
+
+    if (pc->state.bits.req_stat) {
+        pc->state.bits.req_stat = 0;
+        can_transmit_sta(pc);
+    }
+    if (pc->state.bits.req_ina) {
+        pc->state.bits.req_ina = 0;
+        can_transmit_ina(&pc->inaSol);
     }
 }

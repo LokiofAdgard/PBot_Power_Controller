@@ -45,10 +45,17 @@ void can_init(CAN_HandleTypeDef* hcan) {
 
 HAL_StatusTypeDef can_transmit(uint32_t txID) {
     TxHeader.StdId = txID;
-    if (txID == CAN_ID_INA)
-        TxHeader.DLC = 7;
-    else
-        TxHeader.DLC = 8;
+    switch (txID) {
+        case CAN_ID_INA:
+            TxHeader.DLC = 7;
+            break;
+        case CAN_ID_STA:
+            TxHeader.DLC = 8;
+            break;
+        default:
+            TxHeader.DLC = 8;
+            break;
+    }
 
     HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailbox);
     return status;
@@ -63,4 +70,12 @@ HAL_StatusTypeDef can_transmit_ina(INA231_t* ina) {
     TxData[5] = (ina->p_reg >> 8) & 0xFF;
     TxData[6] = ina->address;
     return can_transmit(CAN_ID_INA);
+}
+
+HAL_StatusTypeDef can_transmit_sta(PowerController* pc) {
+    TxData[0] = (pc->state.raw >> 0) & 0xFF;
+    TxData[1] = (pc->state.raw >> 8) & 0xFF;
+    TxData[2] = (pc->temperature >> 0) & 0xFF;
+    TxData[3] = (pc->temperature >> 8) & 0xFF;
+    return can_transmit(CAN_ID_STA);
 }
