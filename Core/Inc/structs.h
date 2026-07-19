@@ -4,6 +4,9 @@
 #include <stdint.h>
 
 #include "INA231.h"
+#include "TMP102.h"
+
+#define TMP_ADDR (0x48 << 1)
 
 #define INA_SOL_ADDR  (0x40 << 1)
 #define INA_MPPT_ADDR (0x41 << 1)
@@ -50,7 +53,7 @@ typedef struct PowerController {
     INA231_t inaV12A;
     INA231_t inaV12B;
 
-    uint16_t temperature;
+    TMP102_t tmp;
 } PowerController;
 
 void pc_init(PowerController* pc, I2C_HandleTypeDef* hi2c);

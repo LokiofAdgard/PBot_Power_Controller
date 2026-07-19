@@ -1,4 +1,5 @@
 #include "INA231.h"
+#include "TMP102.h"
 #include "canbus.h"
 #include "stm32f103xb.h"
 #include "stm32f1xx_hal_gpio.h"
@@ -15,6 +16,7 @@ void pc_init(PowerController* pc, I2C_HandleTypeDef* hi2c) {
     // INA231_Init(&pc->inaSol, hi2c, INA_V12A_ADDR, DEFAULT_R_SHUNT, DEFAULT_CURRENT_LSB);
     // INA231_Init(&pc->inaSol, hi2c, INA_V12B_ADDR, DEFAULT_R_SHUNT, DEFAULT_CURRENT_LSB);
 
+    TMP102_init(&pc->tmp, hi2c, TMP_ADDR);
     pc_check_dc_in(pc);
 }
 
@@ -34,10 +36,8 @@ void pc_ina_update(PowerController* pc) {
     // INA231_GetVals(&pc->inaV5);
     // INA231_GetVals(&pc->inaV12A);
     // INA231_GetVals(&pc->inaV12B);
-}
 
-void pc_tmp_update(PowerController* pc) {
-    pc->temperature += 5;
+    TMP102_getVal(&pc->tmp);
 }
 
 void pc_set_mode(PowerController* pc) {

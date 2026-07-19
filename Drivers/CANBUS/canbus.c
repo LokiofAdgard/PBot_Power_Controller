@@ -75,7 +75,7 @@ HAL_StatusTypeDef can_transmit_ina(INA231_t* ina) {
 HAL_StatusTypeDef can_transmit_sta(PowerController* pc) {
     TxData[0] = (pc->state.raw >> 0) & 0xFF;
     TxData[1] = (pc->state.raw >> 8) & 0xFF;
-    TxData[2] = (pc->temperature >> 0) & 0xFF;
-    TxData[3] = (pc->temperature >> 8) & 0xFF;
+    TxData[2] = (pc->tmp.t_reg >> 0) & 0xFF;
+    TxData[3] = (pc->tmp.t_reg >> 8) & 0xFF;
     return can_transmit(CAN_ID_STA);
 }

@@ -134,7 +134,6 @@ int main(void) {
             pc_check_dc_in(&pc);
 
             count += 10;
-            pc_tmp_update(&pc);
         }
         /* USER CODE END WHILE */
 
